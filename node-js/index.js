@@ -1,78 +1,84 @@
-const fs = require('fs');
-const readLine = require('readline');
-const validator = require('validator');
+const {checkFile, saveContact} = require('./contact')
+const yargs = require('yargs')
 
-const rl = readLine.createInterface({
-    input: process.stdin,
-    output: process.stdout
-});
+checkFile()
 
-// let data = "Ichbal Hadi Nasution"; 
-
-// fs.writeFile("file.txt", data, (err) => { 
-//     if (err) 
-//         console.log(err); 
-//     else { 
-//         console.log("File written successfully\n"); 
-//     } 
-// }); 
-
-// fs.readFile('file.txt', 'utf-8', (err, data) => {
-//     if (err) throw err;
-//     console.log(`File contains : ${data}`);
-// });
-
-//==============================================================================================
-
-
-// Fungsi askPhoneNumber bertanggung jawab untuk memvalidasi nomor telepon yang dimasukkan oleh pengguna.
-// Menggunakan fungsi validator.isMobilePhone untuk memeriksa apakah nomor telepon valid dengan format Indonesia ('id-ID').
-// Jika valid, program akan mencetak pesan 'Ok, Valid!' dan melanjutkan ke langkah berikutnya yaitu meminta alamat email.
-// Jika tidak valid, akan mencetak pesan kesalahan dan meminta input nomor telepon lagi.
-function askPhoneNumber() {
-    function recursiveAsk() {
-        rl.question('Nomor HP kamu? ', number => {
-            if (validator.isMobilePhone(number, 'id-ID')) {
-                console.log('Ok, Valid!');
-                askEmail();
-            } else {
-                console.log('Nomor HP tidak valid. Silakan coba lagi.');
-                recursiveAsk();
-            }
-        });
+yargs.command({
+    command: 'add',
+    describe: 'Add new contact',
+    builder: {
+        name: {
+            describe: 'Nama lengkap',
+            demandOption: true,
+            stype: 'string',
+        },
+        phoneNumber: {
+            describe: 'Nomor Handphone',
+            demandOption: true,
+            stype: 'string',
+        },
+        email: {
+            describe: 'Email',
+            demandOption: true,
+            stype: 'string',
+        },
+    },
+    handler(argv) {
+        saveContact(argv.name, argv.phoneNumber, argv.email)
     }
-    recursiveAsk();
-}
+})
 
-// Fungsi askEmail bertugas untuk memvalidasi alamat email yang dimasukkan oleh pengguna.
-// Menggunakan fungsi validator.isEmail untuk memeriksa apakah alamat email valid.
-// Jika valid, program mencetak pesan 'Ok, Valid!' dan menutup antarmuka baris perintah (CLI).
-// Jika tidak valid, mencetak pesan kesalahan dan meminta input alamat email lagi.
-function askEmail() {
-    function recursiveAsk() {
-        rl.question('Email kamu? ', email => {
-            if (validator.isEmail(email)) {
-                console.log('Ok, Valid!');
-                rl.close();
-            } else {
-                console.log('Email tidak valid. Silakan coba lagi.');
-                recursiveAsk();
-            }
-        });
+yargs.parse()
+
+/*
+
+yargs.command({
+    command: 'list',
+    describe: 'Show all contact list',
+    handler() {
+        listContact()
     }
-    recursiveAsk();
+})
+
+yargs.command({
+    command: 'detail',
+    describe: 'Show contact detail by name',
+    builder: {
+        name: {
+            describe: 'Nama yang dicari',
+            demandOption: true,
+            stype: 'string',
+        },
+    },
+    handler(argv) {
+        detailContact(argv.name)
+    }
+})
+
+yargs.command({
+    command: 'delete',
+    describe: 'Delete contact by name',
+    builder: {
+        name: {
+            describe: 'Nama yang ingin dihapus',
+            demandOption: true,
+            stype: 'string',
+        },
+    },
+    handler(argv) {
+        deleteContactByName(argv.name)
+    }
+})
+const main = async () => {
+    checkFile()
+
+    const name = await ask('Siapa nama anda? ')
+    const phoneNumber = await ask('Tuliskan No HP anda: ')
+    const email = await ask('Tuliskan email anda: ')
+
+    saveContact(name, phoneNumber, email)
 }
 
-// Fungsi main merupakan fungsi utama yang memulai eksekusi program.
-// Menggunakan askName untuk meminta nama pengguna, kemudian mencetak pesan sapaan dengan nama yang dimasukkan.
-// Selanjutnya, memanggil askPhoneNumber untuk meminta nomor telepon dan memulai serangkaian validasi input pengguna.
-function main() {
-    rl.question('Nama kamu? ', name => {
-        console.log(`Yo! ${name}`);
-        askPhoneNumber();
-    });
-}
-
-// Memanggil fungsi main untuk menjalankan program secara keseluruhan.
-main();
+main()
+*/
 
