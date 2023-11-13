@@ -1,5 +1,5 @@
 const yargs = require('yargs')
-const {saveContact, detailContact ,listContact, deleteContactByName} = require('./contact')
+const {saveContact, detailContactByName ,listContact, deleteContactByName, updateContactByName} = require('./contact')
 
 yargs.command({
     command: 'add',
@@ -45,7 +45,7 @@ yargs.command({
         },
     },
     handler(argv) {
-        detailContact(argv.name)
+        detailContactByName(argv.name)
     }
 })
 
@@ -61,6 +61,36 @@ yargs.command({
     },
     handler(argv) {
         deleteContactByName(argv.name)
+    }
+})
+
+yargs.command({
+    command: 'update',
+    describe: 'Update contact by name',
+    builder: {
+        name: {
+            describe: 'Nama yang ingin update',
+            demandOption: true,
+            stype: 'string',
+        },
+        newName: {
+            describe: 'Nama baru',
+            demandOption: false,
+            stype: 'string',
+        },
+        newPhoneNumber: {
+            describe: 'Nomor baru',
+            demandOption: false,
+            stype: 'string',
+        },
+        newEmail: {
+            describe: 'Email baru',
+            demandOption: false,
+            stype: 'string',
+        },
+    },
+    handler(argv) {
+        updateContactByName(argv.name, argv.newName, argv.newPhoneNumber, argv.newEmail)
     }
 })
 

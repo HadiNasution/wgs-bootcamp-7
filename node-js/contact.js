@@ -25,7 +25,7 @@ const loadContact = () => {
 
 // untuk menyimpan data kontak yang menerima 3 argumen, argumen tersebut akan disimpan
 // kedalam file 'data.json'. Sebelum disimpan, data/pertanyaan akan divalidasi dulu
-const saveContact = (name, phoneNumber, email) => {
+function saveContact(name, phoneNumber, email) {
     const contact = {name, phoneNumber, email}
     const contacts = loadContact()
     
@@ -74,19 +74,19 @@ function deleteContactByName(name) {
         // Menghapus elemen dari array tanpa meninggalkan nilai undefined
         contacts.splice(indexToDelete, 1);
         fs.writeFileSync(filePath, JSON.stringify(contacts))
-        console.log(`${name} berhasil dihapus.`)
+        console.log(`==${name} BERHASIL DIHAPUS==`)
     } else {
-        console.log(`${name} tidak ditemukan.`);
+        console.log(`==${name} TIDAK DITEMUKAN==`);
     }
 }
 
 // menampilkan detail kontak berdasarkan nama
-const detailContact = (name) => {
+function detailContactByName(name) {
     const contacts = loadContact()
     const contact = contacts.find(contact => contact.name.toLowerCase() === name.toLowerCase())
     
     if(!contact) {
-        console.log(`${name} tidak ditemukan.`)
+        console.log(`==${name} TIDAK DITEMUKAN==`)
         return false
     }
     console.log(`Nama : ${contact.name}`)
@@ -95,8 +95,38 @@ const detailContact = (name) => {
     
 }
 
+function updateContactByName(name, newName, newPhoneNumber, newEmail) {
+    const contacts = loadContact()
+    const contact = contacts.find(contact => contact.name.toLowerCase() === name.toLowerCase())
+
+    if(!contact) {
+        console.log(`==${name} TIDAK DITEMUKAN==`)
+        return false
+    }
+
+    const updatedName = (newName) ? newName : contact.name
+    const updatedPhoneNumber = (newPhoneNumber) ? newPhoneNumber : contact.phoneNumber
+    const updatedEmail = (newEmail) ? newEmail : contact.email
+
+    const newContact = {
+        name: updatedName, 
+        phoneNumber: updatedPhoneNumber, 
+        email: updatedEmail
+    }
+
+    const indexToDelete = contacts.findIndex(contact => contact.name.toLowerCase() === name.toLowerCase());
+
+    if (indexToDelete !== -1) {
+        contacts.splice(indexToDelete, 1, newContact);
+        fs.writeFileSync(filePath, JSON.stringify(contacts))
+        console.log(`==${name} BERHASIL DIUPDATE==`)
+    } else {
+        console.log(`==${name} GAGAL DI UPDATE==`);
+    }
+}
+
 // export fungsi sebagai local module
-module.exports = {saveContact, detailContact,listContact, deleteContactByName}
+module.exports = {saveContact, detailContactByName,listContact, deleteContactByName, updateContactByName}
 
 /*
 
