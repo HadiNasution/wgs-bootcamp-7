@@ -13,7 +13,7 @@ if(!fs.existsSync(filePath)) {
 // cek file 'data.json' jika tidak ada maka buat file 'data.json' baru
 if(!fs.existsSync(filePath)) {
     fs.writeFileSync(filePath, '[]', 'utf-8');
-    console.log('==FILE DATAJSON SUDAH DIBUAT==')
+    console.log('==FILE DATA.JSON SUDAH DIBUAT==')
 }
 
 // untuk membaca file 'data.json' lalu di parsing kebentuk objek
