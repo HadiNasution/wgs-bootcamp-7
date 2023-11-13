@@ -1,73 +1,71 @@
 const fs = require('fs');
 const validator = require('validator');
 
-// const rl = readLine.createInterface({
-//     input: process.stdin,
-//     output: process.stdout
-// });
+// lokasi file data JSON
+const filePath = 'data/data.json';
 
-const filePath = 'data.json';
-
-function checkFile() {
-    if(!fs.existsSync(filePath)) {
-        fs.writeFileSync(filePath, '[]', 'utf-8');
-    }
+// cek folder 'data', jika tidak ada maka buat folder 'data' baru
+if(!fs.existsSync(filePath)) {
+    fs.mkdirSync(filePath);
+    console.log('==FOLDER DATA SUDAH DIBUAT==')
 }
 
-// const ask = (question) => {
-//     return new Promise((resolve, rejects) => {
-//         rl.question(question, (data) => {
-//             resolve(data)
-//         })
-//     });
-// }
+// cek file 'data.json' jika tidak ada maka buat file 'data.json' baru
+if(!fs.existsSync(filePath)) {
+    fs.writeFileSync(filePath, '[]', 'utf-8');
+    console.log('==FILE DATAJSON SUDAH DIBUAT==')
+}
 
+// untuk membaca file 'data.json' lalu di parsing kebentuk objek
 const loadContact = () => {
     const fileBuffer = fs.readFileSync(filePath, 'utf-8')
     const contacts = JSON.parse(fileBuffer)
     return contacts
 }
 
+// untuk menyimpan data kontak yang menerima 3 argumen, argumen tersebut akan disimpan
+// kedalam file 'data.json'. Sebelum disimpan, data/pertanyaan akan divalidasi dulu
 const saveContact = (name, phoneNumber, email) => {
     const contact = {name, phoneNumber, email}
     const contacts = loadContact()
+    
+    if(name.trim() == '') {
+        console.log('==NAMA TIDAK BOLEH KOSONG==')
+        return false
+    }
 
-    const duplicate = contacts.find((contact) => contact.name == name)
-    if(duplicate) {
-        console.log('Nama sudah terdaftar.')
+    if(contacts.find((contact) => contact.name == name)) {
+        console.log('==NAMA SUDAH TERDAFTAR==')
         return false
     }
 
     if(!validator.isMobilePhone(phoneNumber, 'id-ID')) {
-        console.log('Nomor HP tidak valid')
+        console.log('==NOMOR HP TIDAK VALID==')
         return false
     }
 
-    if(email) {
+    if(email){
         if(!validator.isEmail(email)) {
-            console.log('Email tidak valid.')
+            console.log('==EMAIL TIDAK VALID==')
             return false
         }
     }
 
     contacts.push(contact)
     fs.writeFileSync(filePath, JSON.stringify(contacts))
-    console.log('Data sudah disimpan.')
+    console.log('==DATA SUDAH DISIMPAN==')
 }
 
-
-
-
-module.exports = {checkFile, saveContact}
-
-/*
-const listContact = () => {
+// menampilkan daftar kontak
+function listContact() {
     const contacts = loadContact()
-    console.log('DAFTAR KONTAK')
+    console.log('==DAFTAR KONTAK==')
     contacts.forEach((contact, i) => {
-        console.log(`${i+1}. ${contact.name} - ${contact.phoneNumber} - ${contact.email}`)
+        console.log(`${i+1}. ${contact.name} - ${contact.phoneNumber} - ${(contact.email) ? contact.email : ''}`)
     });
 } 
+
+// menghapus kontak berdasarkan nama
 function deleteContactByName(name) {
     const contacts = loadContact()
     const indexToDelete = contacts.findIndex(contact => contact.name.toLowerCase() === name.toLowerCase());
@@ -81,6 +79,8 @@ function deleteContactByName(name) {
         console.log(`${name} tidak ditemukan.`);
     }
 }
+
+// menampilkan detail kontak berdasarkan nama
 const detailContact = (name) => {
     const contacts = loadContact()
     const contact = contacts.find(contact => contact.name.toLowerCase() === name.toLowerCase())
@@ -91,83 +91,35 @@ const detailContact = (name) => {
     }
     console.log(`Nama : ${contact.name}`)
     console.log(`No Hanphone : ${contact.phoneNumber}`)
-    console.log(`Email : ${contact.email}`)
+    console.log(`Email : ${(contact.email) ? contact.email : ''}`)
     
 }
-function askPhoneNumber() {
-    function recursiveAsk() {
-        rl.question('Nomor HP kamu? ', number => {
-            if (validator.isMobilePhone(number, 'id-ID')) {
-                console.log('Ok, Valid!');
-                dataObj.number = number;
-                askEmail();
-            } else {
-                console.log('Nomor HP tidak valid. Silakan coba lagi.');
-                recursiveAsk();
-            }
-        });
-    }
-    recursiveAsk();
-}
 
-function askEmail() {
-    function recursiveAsk() {
-        rl.question('Email kamu? ', email => {
-            if (validator.isEmail(email)) {
-                console.log('Ok, Valid!');
-                dataObj.email = email;
+// export fungsi sebagai local module
+module.exports = {saveContact, detailContact,listContact, deleteContactByName}
 
-                // save data kontak ke data.json
-                saveDataToFile(dataObj);
+/*
 
-                // read data kontak data.json
-                readData(dataObj);
+const rl = readLine.createInterface({
+    input: process.stdin,
+    output: process.stdout
+});
 
-                // end prompt
-                rl.close();
-            } else {
-                console.log('Email tidak valid. Silakan coba lagi.');
-                recursiveAsk();
-            }
-        });
-    }
-    recursiveAsk();
-}
-
-function main() {
-    rl.question('Nama kamu? ', name => {
-        console.log(`Yo! ${name}`);
-        dataObj.name = name;
-        askPhoneNumber();
+const ask = (question) => {
+    return new Promise((resolve, rejects) => {
+        rl.question(question, (data) => {
+            resolve(data)
+        })
     });
 }
 
-function checkFile() {
-    if(!fs.existsSync(filePath)) {
-        fs.writeFileSync(filePath, '[]', 'utf-8');
-    }
+async function main () {
+    const name = await ask('Siapa nama anda? ')
+    const phoneNumber = await ask('Nomor HP anda? ')
+    const email = await ask('Email anda? ')
+    saveContact(name, phoneNumber, email)
+    listContact()
+    rl.close()
 }
 
-function saveDataToFile(data) {
-    dataArr.push(dataObj);
-    const jsonData = JSON.stringify(dataArr, null, 2);
-    
-    fs.writeFile('data.json', jsonData, 'utf8', err => {
-        if (err) {
-            console.error('Gagal menyimpan data ke file:', err);
-        } else {
-            console.log('Data berhasil disimpan ke file data.json');
-        }
-    });
-}
-
-function readData(data) {
-    fs.readFile('data.json', 'utf-8', (err, data) => {
-        try {   
-            console.log(`File contains : ${dataArr}`);
-        } catch (err) {
-            console.log(err);
-        }
-    });
-}
 */

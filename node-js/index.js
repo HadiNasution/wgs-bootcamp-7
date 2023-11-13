@@ -1,7 +1,5 @@
-const {checkFile, saveContact} = require('./contact')
 const yargs = require('yargs')
-
-checkFile()
+const {saveContact, detailContact ,listContact, deleteContactByName} = require('./contact')
 
 yargs.command({
     command: 'add',
@@ -19,7 +17,7 @@ yargs.command({
         },
         email: {
             describe: 'Email',
-            demandOption: true,
+            demandOption: false,
             stype: 'string',
         },
     },
@@ -27,10 +25,6 @@ yargs.command({
         saveContact(argv.name, argv.phoneNumber, argv.email)
     }
 })
-
-yargs.parse()
-
-/*
 
 yargs.command({
     command: 'list',
@@ -69,6 +63,11 @@ yargs.command({
         deleteContactByName(argv.name)
     }
 })
+
+yargs.parse()
+
+
+/*
 const main = async () => {
     checkFile()
 
@@ -81,4 +80,3 @@ const main = async () => {
 
 main()
 */
-
