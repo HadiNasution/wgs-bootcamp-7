@@ -95,6 +95,7 @@ function detailContactByName(name) {
     
 }
 
+// update kontak, menerima 4 argumen. Argumen selain 'name' optional
 function updateContactByName(name, newName, newPhoneNumber, newEmail) {
     const contacts = loadContact()
     const contact = contacts.find(contact => contact.name.toLowerCase() === name.toLowerCase())
@@ -103,7 +104,7 @@ function updateContactByName(name, newName, newPhoneNumber, newEmail) {
         console.log(`==${name} TIDAK DITEMUKAN==`)
         return false
     }
-
+    // jika tidak ada data baru, maka akan menggunakan data yang lama
     const updatedName = (newName) ? newName : contact.name
     const updatedPhoneNumber = (newPhoneNumber) ? newPhoneNumber : contact.phoneNumber
     const updatedEmail = (newEmail) ? newEmail : contact.email
