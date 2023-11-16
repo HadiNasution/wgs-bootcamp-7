@@ -1,0 +1,47 @@
+<div class="row">
+    <h1 class="fw-bold mt-5">Update Contact ✏</h1>
+</div>
+<div class="row">
+    <% if (typeof error != 'undefined') { %>
+        <div class="alert alert-danger" role="alert">
+            <ul>
+                <% error.forEach(e => { %>
+                 <li><%= e.msg %></li>
+                <% }) %>
+            </ul>
+        </div>
+        <form action="/contact/update/<%= name %>" class="mt-4" method="POST">
+            <div class="input-group flex-nowrap">
+                <span class="input-group-text" id="addon-wrapping">🧑</span>
+                <input type="text" class="form-control-lg w-25" placeholder="Name" value="<%= name %>" name="name" id="name" aria-label="name" aria-describedby="addon-wrapping">
+            </div>
+            <div class="input-group flex-nowrap">
+                <span class="input-group-text" id="addon-wrapping">📞</span>
+                <input type="text" class="form-control-lg w-25" placeholder="Mobile Phone" value="<%= phoneNumber %>" name="phoneNumber" id="phoneNumber" aria-label="phoneNumber" aria-describedby="addon-wrapping">
+            </div>
+            <div class="input-group flex-nowrap">
+                <span class="input-group-text" id="addon-wrapping">📧</span>
+                <input type="text" class="form-control-lg w-25" placeholder="Email" value="<%= email %>" name="email" id="email" aria-label="email" aria-describedby="addon-wrapping">
+            </div>
+
+            <button type="submit" class="btn btn-primary mt-3 w-25">Update</button>
+        </form>
+        <% } else { %>
+            <form action="/contact/update/<%= name %>" class="mt-4" method="POST">
+                <div class="input-group flex-nowrap">
+                    <span class="input-group-text" id="addon-wrapping">🧑</span>
+                    <input type="text" class="form-control-lg w-25" placeholder="Name" value="<%= name %>" name="name" id="name" aria-label="name" aria-describedby="addon-wrapping">
+                </div>
+                <div class="input-group flex-nowrap">
+                    <span class="input-group-text" id="addon-wrapping">📞</span>
+                    <input type="text" class="form-control-lg w-25" placeholder="Mobile Phone" value="<%= phoneNumber %>" name="phoneNumber" id="phoneNumber" aria-label="phoneNumber" aria-describedby="addon-wrapping">
+                </div>
+                <div class="input-group flex-nowrap">
+                    <span class="input-group-text" id="addon-wrapping">📧</span>
+                    <input type="text" class="form-control-lg w-25" placeholder="Email" value="<%= email %>" name="email" id="email" aria-label="email" aria-describedby="addon-wrapping">
+                </div>
+                <button type="submit" class="btn btn-primary mt-3 w-25">Update</button>
+            </form>
+        <% } %>
+</div>
+<a href="/contact" class="btn btn-outline-secondary me-5 mt-3 w-25" role="button">Kembali</a>

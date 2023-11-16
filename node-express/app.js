@@ -1,62 +1,88 @@
 const express = require('express')
 const expressLayouts = require('express-ejs-layouts')
-const morgan = require('morgan')
+const {loadContact, saveContact, detailContactByName,isNameDuplicate, deleteContactByName, updateContactByName} = require('./utils/contact')
+const {body, validationResult, check } = require('express-validator')
 const app = express()
 
 const PORT = 3000
+const layout = 'layout/main-layout'
 
 app.set('view engine', 'ejs') // memberitahu express bahwa kita akan menggunakan view engine ejs
 app.use(expressLayouts) // juga menggunakan expressLayouts
 app.use(express.static('public')) // memberitahu express bahwa folder 'public' bebas diakses
 app.use(express.json()) // memberitahu express bahwa req dan res menggunakan format json
 app.use(express.urlencoded({extended: true})) // memberitahu express untuk enable urlencoded, untuk method post
-app.use(morgan('dev'))
-
-const layout = 'layout/main-layout'
-
-const contacts = [
-    {
-        name: 'hadi',
-        phoneNumber: '0823',
-        email: 'hadi@gmail.com'
-    },
-]
-
-app.use('/', (req, res, next) => {
-    console.log('Time:', Date.now())
-    next()
-})
 
 app.get('/', (req, res) => {
-    //res.send('<h1>Halaman Utama</h1>')
-    //res.render(index)
-    const title = 'Home'
-    res.render('index',{title, layout})
+    res.render('index',{title: 'Home', layout})
 })
 
 app.get('/about', (req, res) => {
-    //res.send('<h1>Halaman About</h1>')
-    //res.json(object)
-    const title = 'About'
-    res.render('about',{title, layout})
+    res.render('about',{title: 'About', layout})
 })
 
 app.get('/contact', (req, res) => {
-    //res.send('<h1>Halaman Contact</h1>')
-    const title = 'Contact'
-    res.render('contact', {title, layout})
+    const contacts = loadContact()
+    res.render('contact', {title: 'Contacts', layout, contacts})
 })
 
-app.post('/contact', (req, res) => {
-    const {name, phoneNumber, email} = req.body
-    contacts.push(name, phoneNumber, email)
-    res.send(`<h1>Kontak disimpan</h1> <br> ${contacts.name}`)
+app.post('/contact', 
+    [   //validasi dengan validator-express
+        body('name').custom((value) => {
+            if(isNameDuplicate(value)) {
+                throw new Error('Nama tidak boleh sama')
+            }
+            return true
+        }),
+        check('phoneNumber', 'Nomor HP tidak valid').isMobilePhone('id-ID'),
+        check('email', 'Email tidak valid').isEmail()
+    ], (req, res) => {
+    const errors = validationResult(req)
+    if(!errors.isEmpty()){ // jika mendapati validasi error maka
+        const {name, phoneNumber, email} = req.body
+        res.render('add-contact', {title: 'Add new contact', layout, error: errors.array(), name, phoneNumber, email})
+    } else { // jika tidak mendapatkan validasi error maka
+        const {name, phoneNumber, email} = req.body
+        saveContact(name, phoneNumber, email)
+        res.redirect('/contact')
+    }
 })
 
-// app.get('/product/:id', (req, res) => {
-//     res.send(`<h1>ID : ${req.params.id} <br> Query : ${req.query.category}</h1>`)
-// })
+app.get('/contact/add', (req, res) => {
+    res.render('add-contact', {title: 'Add new contact', layout})
+})
 
+app.get('/contact/update/:name', (req, res) => {
+    const {name, phoneNumber, email} = detailContactByName(req.params.name)
+    res.render('update-contact', {title: 'Update contact', layout, name, phoneNumber, email})
+})
+
+app.post('/contact/update/:name', 
+    [
+        check('phoneNumber', 'Nomor HP tidak valid').isMobilePhone('id-ID'),
+        check('email', 'Email tidak valid').isEmail()
+    ], (req, res) => {
+    const errors = validationResult(req)
+    if(!errors.isEmpty()){
+        const {name, phoneNumber, email} = req.body
+        res.render('update-contact', {title: 'Update contact', layout, error: errors.array(), name, phoneNumber, email})
+    } else {
+        const {name, phoneNumber, email} = req.body
+        const nameTarget = req.params.name
+        updateContactByName(nameTarget, name, phoneNumber, email)
+        res.redirect('/contact')
+    }
+})
+
+app.get('/contact/details/:name', (req, res) => {
+    const {name, phoneNumber, email} = detailContactByName(req.params.name)
+    res.render('detail-contact', {title: 'Contact details', layout, name, phoneNumber, email})
+})
+
+app.get('/contact/delete/:name', (req, res) => {
+    deleteContactByName(req.params.name)
+    res.redirect('/contact')
+})
 
 app.listen(PORT, () => {
     console.log(`App listening at http://localhost:${PORT}`)
