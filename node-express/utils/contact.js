@@ -1,11 +1,12 @@
 const fs = require('fs');
 
 // lokasi file data JSON
-const filePath = 'data/data.json';
+const filePath = 'data/data.json'
+const dirPath = './data'
 
 // cek folder 'data', jika tidak ada maka buat folder 'data' baru
-if(!fs.existsSync(filePath)) {
-    fs.mkdirSync(filePath);
+if(!fs.existsSync(dirPath)) {
+    fs.mkdirSync(dirPath);
     console.log('==FOLDER DATA SUDAH DIBUAT==')
 }
 
@@ -24,10 +25,8 @@ const loadContact = () => {
 
 // untuk menyimpan data kontak yang menerima 3 argumen, argumen tersebut akan disimpan
 // kedalam file 'data.json'. Sebelum disimpan, data/pertanyaan akan divalidasi dulu
-function saveContact(name, phoneNumber, email) {
-    const contact = {name, phoneNumber, email}
+function saveContact(contact) {
     const contacts = loadContact()
-    
     contacts.push(contact)
     fs.writeFileSync(filePath, JSON.stringify(contacts))
     console.log('==DATA SUDAH DISIMPAN==')
@@ -39,7 +38,7 @@ function deleteContactByName(name) {
     const indexToDelete = contacts.findIndex(contact => contact.name.toLowerCase() === name.toLowerCase());
 
     if (indexToDelete !== -1) {
-        // Menghapus elemen dari array tanpa meninggalkan nilai undefined
+        // Menghapus elemen dari array tanpa meninggalkan nilai undefined dan menambah array baru
         contacts.splice(indexToDelete, 1);
         fs.writeFileSync(filePath, JSON.stringify(contacts))
         console.log(`==${name} BERHASIL DIHAPUS==`)
@@ -48,54 +47,29 @@ function deleteContactByName(name) {
     }
 }
 
-function isNameDuplicate(name) {
+// untuk memeriksa apakah ada nama yang duplikat
+function findContactByName(name) {
     const contacts = loadContact()
-    const isDuplicate = contacts.find(contact => contact.name.toLowerCase() === name.toLowerCase())
-    return isDuplicate
-}
-
-// menampilkan detail kontak berdasarkan nama
-function detailContactByName(name) {
-    const contacts = loadContact()
-    const contact = contacts.find(contact => contact.name.toLowerCase() === name.toLowerCase())
-    
-    if(!contact) {
-        console.log(`==${name} TIDAK DITEMUKAN==`)
-        return false
-    }
+    const contact = contacts.find(c => c.name.toLowerCase() === name.toLowerCase())
     return contact
 }
 
-// update kontak, menerima 4 argumen. Argumen selain 'name' optional
-function updateContactByName(name, newName, newPhoneNumber, newEmail) {
+// update kontak dengan memodifikasi kontak lama menggunakan .splice()
+function updateContactByName(newContact) {
     const contacts = loadContact()
-    const contact = contacts.find(contact => contact.name.toLowerCase() === name.toLowerCase())
 
-    if(!contact) {
-        console.log(`==${name} TIDAK DITEMUKAN==`)
-        return false
-    }
-    // jika tidak ada data baru, maka akan menggunakan data yang lama
-    const updatedName = (newName) ? newName : contact.name
-    const updatedPhoneNumber = (newPhoneNumber) ? newPhoneNumber : contact.phoneNumber
-    const updatedEmail = (newEmail) ? newEmail : contact.email
-
-    const newContact = {
-        name: updatedName, 
-        phoneNumber: updatedPhoneNumber, 
-        email: updatedEmail
-    }
-
-    const indexToDelete = contacts.findIndex(contact => contact.name.toLowerCase() === name.toLowerCase());
+    const indexToDelete = contacts.findIndex(contact => contact.name.toLowerCase() ===  newContact.oldName.toLowerCase())
+    // hapus oldName sebelum ditulis ke data.json
+    delete newContact.oldName
 
     if (indexToDelete !== -1) {
-        contacts.splice(indexToDelete, 1, newContact);
+        contacts.splice(indexToDelete, 1, newContact)
         fs.writeFileSync(filePath, JSON.stringify(contacts))
-        console.log(`==${name} BERHASIL DIUPDATE==`)
+        console.log(`==${newContact.name} BERHASIL DIUPDATE==`)
     } else {
-        console.log(`==${name} GAGAL DI UPDATE==`);
+        console.log(`==${newContact.name} GAGAL DI UPDATE==`)
     }
 }
 
 // export fungsi sebagai local module
-module.exports = {loadContact, saveContact, detailContactByName,isNameDuplicate, deleteContactByName, updateContactByName}
+module.exports = {loadContact, saveContact, findContactByName, deleteContactByName, updateContactByName}

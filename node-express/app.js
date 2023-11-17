@@ -1,6 +1,6 @@
 const express = require('express')
 const expressLayouts = require('express-ejs-layouts')
-const {loadContact, saveContact, detailContactByName,isNameDuplicate, deleteContactByName, updateContactByName} = require('./utils/contact')
+const {loadContact, saveContact, findContactByName, deleteContactByName, updateContactByName} = require('./utils/contact')
 const {body, validationResult, check } = require('express-validator')
 const app = express()
 
@@ -26,11 +26,11 @@ app.get('/contact', (req, res) => {
     res.render('contact', {title: 'Contacts', layout, contacts})
 })
 
-app.post('/contact', 
+app.post('/contact/add', 
     [   //validasi dengan validator-express
         body('name').custom((value) => {
-            if(isNameDuplicate(value)) {
-                throw new Error('Nama tidak boleh sama')
+            if(findContactByName(value)) {
+                throw new Error('Nama sudah digunakan')
             }
             return true
         }),
@@ -39,44 +39,50 @@ app.post('/contact',
     ], (req, res) => {
     const errors = validationResult(req)
     if(!errors.isEmpty()){ // jika mendapati validasi error maka
-        const {name, phoneNumber, email} = req.body
-        res.render('add-contact', {title: 'Add new contact', layout, error: errors.array(), name, phoneNumber, email})
+        const contact = req.body
+        res.render('add-contact', {title: 'Add new contact', layout, error: errors.array(), contact})
     } else { // jika tidak mendapatkan validasi error maka
-        const {name, phoneNumber, email} = req.body
-        saveContact(name, phoneNumber, email)
+        saveContact(req.body)
         res.redirect('/contact')
     }
 })
 
 app.get('/contact/add', (req, res) => {
-    res.render('add-contact', {title: 'Add new contact', layout})
+    const contact = req.body
+    res.render('add-contact', {title: 'Add new contact', layout, contact})
 })
 
 app.get('/contact/update/:name', (req, res) => {
-    const {name, phoneNumber, email} = detailContactByName(req.params.name)
-    res.render('update-contact', {title: 'Update contact', layout, name, phoneNumber, email})
+    const contact = findContactByName(req.params.name)
+    res.render('update-contact', {title: 'Update contact', layout, contact})
 })
 
-app.post('/contact/update/:name', 
+app.post('/contact/update',
     [
+        body('name').custom((value, {req}) => {
+        // cek jika ada nama yang duplikat (sudah ada di data.json) dan mengijinkan menggunakan nama sebelumnya
+        if(value !== req.body.oldName && findContactByName(value)) {
+            throw new Error('Nama sudah digunakan')
+        }
+        return true
+        }),
         check('phoneNumber', 'Nomor HP tidak valid').isMobilePhone('id-ID'),
         check('email', 'Email tidak valid').isEmail()
     ], (req, res) => {
     const errors = validationResult(req)
+    
     if(!errors.isEmpty()){
-        const {name, phoneNumber, email} = req.body
-        res.render('update-contact', {title: 'Update contact', layout, error: errors.array(), name, phoneNumber, email})
+        const contact = req.body
+        res.render('update-contact', {title: 'Update contact', layout, error: errors.array(), contact})
     } else {
-        const {name, phoneNumber, email} = req.body
-        const nameTarget = req.params.name
-        updateContactByName(nameTarget, name, phoneNumber, email)
+        updateContactByName(req.body)
         res.redirect('/contact')
     }
 })
 
 app.get('/contact/details/:name', (req, res) => {
-    const {name, phoneNumber, email} = detailContactByName(req.params.name)
-    res.render('detail-contact', {title: 'Contact details', layout, name, phoneNumber, email})
+    const contact = findContactByName(req.params.name)
+    res.render('detail-contact', {title: 'Contact details', layout, contact})
 })
 
 app.get('/contact/delete/:name', (req, res) => {
@@ -87,8 +93,6 @@ app.get('/contact/delete/:name', (req, res) => {
 app.listen(PORT, () => {
     console.log(`App listening at http://localhost:${PORT}`)
 })
-
-
 
 /* 
 const http = require('http')

@@ -10,24 +10,24 @@
                 <% }) %>
             </ul>
         </div>
-        <form action="/contact" class="mt-4" method="POST">
+        <form action="/contact/add" class="mt-4" method="POST">
             <div class="input-group flex-nowrap">
                 <span class="input-group-text" id="addon-wrapping">🧑</span>
-                <input type="text" class="form-control-lg w-25" placeholder="Name" value="<%= name %>" name="name" id="name" aria-label="name" aria-describedby="addon-wrapping">
+                <input type="text" class="form-control-lg w-25" placeholder="Name" value="<%= contact.name %>" name="name" id="name" aria-label="name" aria-describedby="addon-wrapping">
             </div>
             <div class="input-group flex-nowrap">
                 <span class="input-group-text" id="addon-wrapping">📞</span>
-                <input type="text" class="form-control-lg w-25" placeholder="Mobile Phone" value="<%= phoneNumber %>" name="phoneNumber" id="phoneNumber" aria-label="phoneNumber" aria-describedby="addon-wrapping">
+                <input type="text" class="form-control-lg w-25" placeholder="Mobile Phone" value="<%= contact.phoneNumber %>" name="phoneNumber" id="phoneNumber" aria-label="phoneNumber" aria-describedby="addon-wrapping">
             </div>
             <div class="input-group flex-nowrap">
                 <span class="input-group-text" id="addon-wrapping">📧</span>
-                <input type="text" class="form-control-lg w-25" placeholder="Email" value="<%= email %>" name="email" id="email" aria-label="email" aria-describedby="addon-wrapping">
+                <input type="text" class="form-control-lg w-25" placeholder="Email" value="<%= contact.email %>" name="email" id="email" aria-label="email" aria-describedby="addon-wrapping">
             </div>
             
             <button type="submit" class="btn btn-primary mt-3 w-25">Submit</button>
         </form>
         <% } else { %>
-            <form action="/contact" class="mt-4" method="POST">
+            <form action="/contact/add" class="mt-4" method="POST">
                 <div class="input-group flex-nowrap">
                     <span class="input-group-text" id="addon-wrapping">🧑</span>
                     <input type="text" class="form-control-lg w-25" placeholder="Name" name="name" id="name" aria-label="name" aria-describedby="addon-wrapping">

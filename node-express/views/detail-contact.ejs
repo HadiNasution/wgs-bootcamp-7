@@ -1,10 +1,10 @@
 <h1 class="fw-bold mt-5 mb-3">Details Contact 🔍</h1>
-<p class="fs-4">🧑 <%= name %></p>
+<p class="fs-4">🧑 <%= contact.name %></p>
 <hr class="w-25">
-<p class="fs-4">📞 <%= phoneNumber %></p>
+<p class="fs-4">📞 <%= contact.phoneNumber %></p>
 <hr class="w-25">
-<p class="fs-4 mb-4">📧 <%= email %></p>
+<p class="fs-4 mb-4">📧 <%= contact.email %></p>
 <hr class="w-25 mt-4">
 <a href="/contact" class="btn btn-outline-secondary me-3" role="button">Kembali</a>
-<a class="btn btn-secondary me-2" href="/contact/update/<%= name %>" role="button">Edit</a>
-<a class="btn btn-danger" href="/contact/delete/<%= name %>" role="button">Delete</a>
+<a class="btn btn-secondary me-2" href="/contact/update/<%= contact.name %>" role="button">Edit</a>
+<a class="btn btn-danger" href="/contact/delete/<%= contact.name %>" role="button" onclick=" return confirm('Ingin menghapus <%= contact.name %>')">Delete</a>
