@@ -29,8 +29,14 @@ app.get('/contact', (req, res) => {
 app.post('/contact/add', 
     [   //validasi dengan validator-express
         body('name').custom((value) => {
+            // cek apakah nama sudah ada di data.json
             if(findContactByName(value)) {
                 throw new Error('Nama sudah digunakan')
+            }
+            //cek apakah nama mengandung karakter spesial / angka
+            const regex = /^[a-zA-Z0-9 ]*$/;
+            if(!regex.test(value)) {
+                throw new Error('Nama harus menggunakan huruf latin')
             }
             return true
         }),
@@ -63,6 +69,10 @@ app.post('/contact/update',
         // cek jika ada nama yang duplikat (sudah ada di data.json) dan mengijinkan menggunakan nama sebelumnya
         if(value !== req.body.oldName && findContactByName(value)) {
             throw new Error('Nama sudah digunakan')
+        }
+        const regex = /^[a-zA-Z0-9 ]*$/;
+        if(!regex.test(value)) {
+            throw new Error('Nama harus menggunakan huruf latin')
         }
         return true
         }),

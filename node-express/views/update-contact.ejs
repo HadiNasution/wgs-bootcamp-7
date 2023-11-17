@@ -19,15 +19,15 @@
             <input type="hidden" name="oldName" value="<%= (contact.oldName) ? contact.oldName : contact.name %>">
             <div class="input-group flex-nowrap">
                 <span class="input-group-text" id="addon-wrapping">🧑</span>
-                <input type="text" class="form-control-lg w-25" placeholder="Name" value="<%= contact.name %>" name="name" id="name" aria-label="name" aria-describedby="addon-wrapping">
+                <input type="text" class="form-control-lg w-25" placeholder="Name" value="<%= contact.name %>" name="name" id="name" aria-label="name" aria-describedby="addon-wrapping" required>
             </div>
             <div class="input-group flex-nowrap">
                 <span class="input-group-text" id="addon-wrapping">📞</span>
-                <input type="text" class="form-control-lg w-25" placeholder="Mobile Phone" value="<%= contact.phoneNumber %>" name="phoneNumber" id="phoneNumber" aria-label="phoneNumber" aria-describedby="addon-wrapping">
+                <input type="text" class="form-control-lg w-25" placeholder="Mobile Phone" value="<%= contact.phoneNumber %>" name="phoneNumber" id="phoneNumber" aria-label="phoneNumber" aria-describedby="addon-wrapping" required>
             </div>
             <div class="input-group flex-nowrap">
                 <span class="input-group-text" id="addon-wrapping">📧</span>
-                <input type="text" class="form-control-lg w-25" placeholder="Email" value="<%= contact.email %>" name="email" id="email" aria-label="email" aria-describedby="addon-wrapping">
+                <input type="text" class="form-control-lg w-25" placeholder="Email" value="<%= contact.email %>" name="email" id="email" aria-label="email" aria-describedby="addon-wrapping" required>
             </div>
 
             <button type="submit" class="btn btn-primary mt-3 w-25">Update</button>
@@ -37,15 +37,15 @@
                 <input type="hidden" name="oldName" value="<%= (contact.oldName) ? contact.oldName : contact.name %>">
                 <div class="input-group flex-nowrap">
                     <span class="input-group-text" id="addon-wrapping">🧑</span>
-                    <input type="text" class="form-control-lg w-25" placeholder="Name" value="<%= contact.name %>" name="name" id="name" aria-label="name" aria-describedby="addon-wrapping">
+                    <input type="text" class="form-control-lg w-25" placeholder="Name" value="<%= contact.name %>" name="name" id="name" aria-label="name" aria-describedby="addon-wrapping" required>
                 </div>
                 <div class="input-group flex-nowrap">
                     <span class="input-group-text" id="addon-wrapping">📞</span>
-                    <input type="text" class="form-control-lg w-25" placeholder="Mobile Phone" value="<%= contact.phoneNumber %>" name="phoneNumber" id="phoneNumber" aria-label="phoneNumber" aria-describedby="addon-wrapping">
+                    <input type="text" class="form-control-lg w-25" placeholder="Mobile Phone" value="<%= contact.phoneNumber %>" name="phoneNumber" id="phoneNumber" aria-label="phoneNumber" aria-describedby="addon-wrapping" required>
                 </div>
                 <div class="input-group flex-nowrap">
                     <span class="input-group-text" id="addon-wrapping">📧</span>
-                    <input type="text" class="form-control-lg w-25" placeholder="Email" value="<%= contact.email %>" name="email" id="email" aria-label="email" aria-describedby="addon-wrapping">
+                    <input type="text" class="form-control-lg w-25" placeholder="Email" value="<%= contact.email %>" name="email" id="email" aria-label="email" aria-describedby="addon-wrapping" required>
                 </div>
                 <button type="submit" class="btn btn-primary mt-3 w-25">Update</button>
             </form>
