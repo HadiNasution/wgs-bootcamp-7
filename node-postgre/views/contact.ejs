@@ -1,0 +1,35 @@
+<h1 class="fw-bold mt-5">Halaman Contact ☎</h1>
+<div class="row">
+    <div class="col">
+        <p class="fs-5">Manage your contact</p>
+    </div>
+    <div class="col text-end">
+        <a class="btn btn-success w-50" href="/contact/add" role="button">Add new</a>
+    </div>
+</div>
+<table class="table table-striped">
+    <thead>
+      <tr>
+        <th scope="col">#</th>
+        <th scope="col">Name</th>
+        <th scope="col">Phone Number</th>
+        <th scope="col">Email</th>
+        <th scope="col" class="text-end">Action</th>
+      </tr>
+    </thead>
+    <tbody>
+        <% contacts.forEach((contact, i) => { %>
+            <tr>
+              <th scope="row"><%= i+1 %></th>
+              <td><%= contact.name %></td>
+              <td><%= contact.phonenumber %></td>
+              <td><%= contact.email %></td>
+              <td class="text-end">
+                <a class="btn btn-secondary me-2" href="/contact/details/<%= contact.name %>" role="button">Details</a>
+                <a class="btn btn-danger me-2" href="/contact/delete/<%= contact.name %>" role="button" onclick=" return confirm('Ingin menghapus <%= contact.name %>')">Delete</a>
+                <a class="btn btn-info" href="/contact/update/<%= contact.name %>" role="button">Update</a>
+              </td>
+            </tr>
+        <% }) %>
+    </tbody>
+  </table>
