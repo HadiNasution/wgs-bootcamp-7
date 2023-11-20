@@ -33,7 +33,7 @@ app.post('/contact/add',
             if(findContactByName(value)) {
                 throw new Error('Nama sudah digunakan')
             }
-            //cek apakah nama mengandung karakter spesial / angka
+            // tidak menginjinkan nama menggunakan karakter spesial. Hanya menginjinkan spasi dan huruf latin
             const regex = /^[a-zA-Z0-9 ]*$/;
             if(!regex.test(value)) {
                 throw new Error('Nama harus menggunakan huruf latin')
@@ -66,10 +66,14 @@ app.get('/contact/update/:name', (req, res) => {
 app.post('/contact/update',
     [
         body('name').custom((value, {req}) => {
-        // cek jika ada nama yang duplikat (sudah ada di data.json) dan mengijinkan menggunakan nama sebelumnya
-        if(value !== req.body.oldName && findContactByName(value)) {
-            throw new Error('Nama sudah digunakan')
-        }
+        // apakah nama yang baru berbeda dengan nama lama, jika iya maka...
+        if(value !== req.body.oldName) {
+            // cek apakah nama tersebut sudah pernah digunakan
+            if(findContactByName(value)) {
+                throw new Error('Nama sudah digunakan')
+            }  
+        } 
+        // tidak mengijinkan nama menggunakan karakter spesial. Hanya dibolehkan menggunakan spasi dan huruf latin
         const regex = /^[a-zA-Z0-9 ]*$/;
         if(!regex.test(value)) {
             throw new Error('Nama harus menggunakan huruf latin')

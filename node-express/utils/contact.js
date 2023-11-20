@@ -50,7 +50,7 @@ function deleteContactByName(name) {
 // untuk memeriksa apakah ada nama yang duplikat
 function findContactByName(name) {
     const contacts = loadContact()
-    const contact = contacts.find(c => c.name.toLowerCase() === name.toLowerCase())
+    const contact = contacts.find(contact => contact.name.toLowerCase() === name.toLowerCase())
     return contact
 }
 
