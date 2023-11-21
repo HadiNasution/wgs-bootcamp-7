@@ -25,9 +25,9 @@
               <td><%= contact.phonenumber %></td>
               <td><%= contact.email %></td>
               <td class="text-end">
-                <a class="btn btn-secondary me-2" href="/contact/details/<%= contact.name %>" role="button">Details</a>
-                <a class="btn btn-danger me-2" href="/contact/delete/<%= contact.name %>" role="button" onclick=" return confirm('Ingin menghapus <%= contact.name %>')">Delete</a>
-                <a class="btn btn-info" href="/contact/update/<%= contact.name %>" role="button">Update</a>
+                <a class="btn btn-secondary me-2" href="/contact/details/<%= contact.id %>" role="button">Details</a>
+                <a class="btn btn-danger me-2" href="/contact/delete/<%= contact.id %>" role="button" onclick=" return confirm('Ingin menghapus <%= contact.name %>')">Delete</a>
+                <a class="btn btn-info" href="/contact/update/<%= contact.id %>" role="button">Update</a>
               </td>
             </tr>
         <% }) %>

@@ -2,7 +2,7 @@ const express = require('express')
 const expressLayouts = require('express-ejs-layouts')
 const {body, validationResult, check } = require('express-validator')
 const app = express()
-const {getAllContact, getContact, deleteContact, addContact} = require('./utils/model')
+const {getAllContact, getContact,getContactName, deleteContact, addContact, updateContact} = require('./utils/model')
 
 const PORT = 3000
 const layout = 'layout/main-layout'
@@ -35,10 +35,6 @@ app.get('/contact', async(req, res) => {
 app.post('/contact/add', 
     [   //validasi dengan validator-express
         body('name').custom((value) => {
-            // cek apakah nama sudah ada di data.json
-            if(findContactByName(value)) {
-                throw new Error('Nama sudah digunakan')
-            }
             // tidak menginjinkan nama menggunakan karakter spesial. Hanya menginjinkan spasi dan huruf latin
             const regex = /^[a-zA-Z0-9 ]*$/;
             if(!regex.test(value)) {
@@ -65,21 +61,14 @@ app.get('/contact/add', (req, res) => {
     res.render('add-contact', {title: 'Add new contact', layout, contact})
 })
 
-app.get('/contact/update/:name', (req, res) => {
-    const contact = deleteContact(req.params.name)
+app.get('/contact/update/:id', async (req, res) => {
+    const contact = await getContact(req.params.id)
     res.render('update-contact', {title: 'Update contact', layout, contact})
 })
 
 app.post('/contact/update',
     [
         body('name').custom((value, {req}) => {
-        // apakah nama yang baru berbeda dengan nama lama, jika iya maka...
-        if(value !== req.body.oldName) {
-            // cek apakah nama tersebut sudah pernah digunakan
-            if(findContactByName(value)) {
-                throw new Error('Nama sudah digunakan')
-            }  
-        } 
         // tidak mengijinkan nama menggunakan karakter spesial. Hanya dibolehkan menggunakan spasi dan huruf latin
         const regex = /^[a-zA-Z0-9 ]*$/;
         if(!regex.test(value)) {
@@ -89,21 +78,22 @@ app.post('/contact/update',
         }),
         check('phoneNumber', 'Nomor HP tidak valid').isMobilePhone('id-ID'),
         check('email', 'Email tidak valid').isEmail()
-    ], (req, res) => {
+    ], async (req, res) => {
     const errors = validationResult(req)
     
     if(!errors.isEmpty()){
         const contact = req.body
         res.render('update-contact', {title: 'Update contact', layout, error: errors.array(), contact})
     } else {
-        updateContactByName(req.body)
+        const {id, name, phoneNumber, email} = req.body
+        updateContact(name, phoneNumber, email, id)
         res.redirect('/contact')
     }
 })
 
-app.get('/contact/details/:name', async (req, res) => {
+app.get('/contact/details/:id', async (req, res) => {
     try {
-        const contact = await getContact(req.params.name)
+        const contact = await getContact(req.params.id)
         res.render('detail-contact', {title: 'Contact details', layout, contact})
     } catch (error) {
         console.error('Error executing query:', error);
@@ -111,8 +101,8 @@ app.get('/contact/details/:name', async (req, res) => {
     }
 })
 
-app.get('/contact/delete/:name', (req, res) => {
-    deleteContactByName(req.params.name)
+app.get('/contact/delete/:id', async (req, res) => {
+    await deleteContact(req.params.id)
     res.redirect('/contact')
 })
 
