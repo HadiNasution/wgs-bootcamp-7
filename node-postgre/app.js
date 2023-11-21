@@ -44,15 +44,20 @@ app.post('/contact/add',
         }),
         check('phoneNumber', 'Nomor HP tidak valid').isMobilePhone('id-ID'),
         check('email', 'Email tidak valid').isEmail()
-    ], (req, res) => {
+    ], async (req, res) => {
     const errors = validationResult(req)
     if(!errors.isEmpty()){ // jika mendapati validasi error maka
         const contact = req.body
         res.render('add-contact', {title: 'Add new contact', layout, error: errors.array(), contact})
     } else { // jika tidak mendapatkan validasi error maka
-        const {name, phoneNumber, email} = req.body
-        addContact(name, phoneNumber, email)
-        res.redirect('/contact')
+        try {
+            const {name, phoneNumber, email} = req.body
+            await addContact(name, phoneNumber, email)
+            res.redirect('/contact')
+        } catch (error) {
+            console.error('Error message:', error);
+            res.status(500).send('Internal Server Error');
+        }
     }
 })
 
@@ -62,13 +67,18 @@ app.get('/contact/add', (req, res) => {
 })
 
 app.get('/contact/update/:id', async (req, res) => {
-    const contact = await getContact(req.params.id)
-    res.render('update-contact', {title: 'Update contact', layout, contact})
+    try {
+        const contact = await getContact(req.params.id)
+        res.render('update-contact', {title: 'Update contact', layout, contact})
+    } catch (error) {
+        console.error('Error message:', error);
+        res.status(500).send('Internal Server Error');
+    }
 })
 
 app.post('/contact/update',
     [
-        body('name').custom((value, {req}) => {
+        body('name').custom((value) => {
         // tidak mengijinkan nama menggunakan karakter spesial. Hanya dibolehkan menggunakan spasi dan huruf latin
         const regex = /^[a-zA-Z0-9 ]*$/;
         if(!regex.test(value)) {
@@ -85,9 +95,14 @@ app.post('/contact/update',
         const contact = req.body
         res.render('update-contact', {title: 'Update contact', layout, error: errors.array(), contact})
     } else {
-        const {id, name, phoneNumber, email} = req.body
-        updateContact(name, phoneNumber, email, id)
-        res.redirect('/contact')
+        try {
+            const {id, name, phoneNumber, email} = req.body
+            await updateContact(name, phoneNumber, email, id)
+            res.redirect('/contact')
+        } catch (error) {
+            console.error('Error message:', error);
+            res.status(500).send('Internal Server Error');
+        }
     }
 })
 
@@ -102,8 +117,13 @@ app.get('/contact/details/:id', async (req, res) => {
 })
 
 app.get('/contact/delete/:id', async (req, res) => {
-    await deleteContact(req.params.id)
-    res.redirect('/contact')
+    try {
+        await deleteContact(req.params.id)
+        res.redirect('/contact')
+    } catch (error) {
+        console.error('Error executing query:', error);
+        res.status(500).send('Internal Server Error');
+    }
 })
 
 app.listen(PORT, () => {
