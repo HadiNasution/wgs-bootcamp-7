@@ -1,10 +1,25 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-import Navbar from './components/Navbar';
-import Heading from './components/Heading';
+import React from "react";
+import ReactDOM from "react-dom/client";
+import Navbar from "./components/Navbar";
+import Comment from "./components/Comment";
 
-ReactDOM.render(<Navbar />, document.getElementById("nav"))
-ReactDOM.render(<Heading />, document.getElementById("root"))
+// ReactDOM.render(<Navbar />, document.getElementById("nav"));
+// ReactDOM.render(<Comment />, document.getElementById("root"));
+
+const nav = ReactDOM.createRoot(document.getElementById("nav"));
+const root = ReactDOM.createRoot(document.getElementById("root"));
+
+nav.render(
+  <React.StrictMode>
+    <Navbar />
+  </React.StrictMode>
+);
+
+root.render(
+  <React.StrictMode>
+    <Comment />
+  </React.StrictMode>
+);
 
 /*
 import ReactDOM from 'react-dom/client';
